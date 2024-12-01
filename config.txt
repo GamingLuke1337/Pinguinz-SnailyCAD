@@ -1,0 +1,11 @@
+[database]
+host = localhost
+port = 3306
+user = myuser
+password = mypassword
+name = snailycad
+
+[server]
+host = 127.0.0.1
+port = 8000
+reload = true
