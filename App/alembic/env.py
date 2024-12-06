@@ -1,28 +1,34 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Füge den absoluten Pfad zu 'App' zur sys.path hinzu
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'App')))
+
+# Teste den Import
+from models import Base
+print("Modul 'app' erfolgreich importiert!")
+
 
 # alembic/env.py
+
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
-
-# Importiere das MetaData-Objekt von deinen Modellen
-from app.models import Base  # Importiere hier deine Base-Instanz aus models.py
+from app.models import Base
+from app.config import Config
 
 config = context.config
 
-# Konfiguriere Logging
+# Logging konfigurieren
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Setze das MetaData-Objekt für Alembic
-target_metadata = Base.metadata  # Setze hier das MetaData-Objekt
+# MetaData-Objekt setzen
+target_metadata = Base.metadata
 
 def run_migrations_offline() -> None:
-    """Führe Migrationen im Offline-Modus aus."""
-    url = config.get_main_option("sqlalchemy.url")
+    """Migrationen im Offline-Modus ausführen."""
+    url = Config.DATABASE_URL
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -34,7 +40,7 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 def run_migrations_online() -> None:
-    """Führe Migrationen im Online-Modus aus."""
+    """Migrationen im Online-Modus ausführen."""
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
